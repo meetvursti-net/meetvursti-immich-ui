@@ -10,7 +10,7 @@ on:
 permissions:
   contents: write
   id-token: write
-  packages: write
+  # packages: write
 
 jobs:
   publish:
@@ -39,11 +39,11 @@ jobs:
       #          echo "Package is $PACKAGE_NAME"
       #          echo "package_name=$PACKAGE_NAME" >> "$GITHUB_OUTPUT"
 
-      - name: Publish to GitHub Package Registry
-        # run: pnpm --filter ./packages/${{ steps.find-package.outputs.package_name }} publish --no-git-checks
-        run: pnpm publish ./packages/ui
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      # - name: Publish to GitHub Package Registry
+      #   # run: pnpm --filter ./packages/${{ steps.find-package.outputs.package_name }} publish --no-git-checks
+      #   run: pnpm publish ./packages/ui
+      #   env:
+      #     NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to dist branch
         run: |

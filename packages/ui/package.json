@@ -61,7 +61,7 @@
     "vitest": "^4.0.0"
   },
   "dependencies": {
-    "@immich/svelte-markdown-preprocess": "workspace:^",
+    "@immich/svelte-markdown-preprocess": "npm:@immich/svelte-markdown-preprocess@^0.2.1",
     "@internationalized/date": "^3.10.0",
     "@mdi/js": "^7.4.47",
     "bits-ui": "^2.9.8",

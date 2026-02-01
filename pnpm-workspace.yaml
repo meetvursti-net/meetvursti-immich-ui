@@ -1,7 +1,8 @@
 packages:
   - packages/*
 
-linkWorkspacePackages: true
+# linkWorkspacePackages: true
+linkWorkspacePackages: deep
 
 onlyBuiltDependencies:
   - '@tailwindcss/oxide'

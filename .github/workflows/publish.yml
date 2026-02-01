@@ -42,3 +42,5 @@ jobs:
       - name: Publish
         # run: pnpm --filter ./packages/${{ steps.find-package.outputs.package_name }} publish --no-git-checks
         run: pnpm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

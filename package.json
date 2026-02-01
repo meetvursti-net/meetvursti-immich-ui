@@ -1,5 +1,5 @@
 {
-  "name": "immich-monorepo",
+  "name": "@meetvursti-net/immich-monorepo",
   "version": "0.0.1",
   "description": "monorepo for immich and friends",
   "private": true,
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/immich-app/ui.git"
+    "url": "git+https://github.com/meetvursti-net/meetvursti-immich-ui.git"
   },
   "scripts": {
     "start": "pnpm --filter @immich/ui start",

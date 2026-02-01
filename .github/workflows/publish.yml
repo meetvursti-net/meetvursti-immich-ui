@@ -8,7 +8,7 @@ on:
     branches: [main]
 
 permissions:
-  contents: read
+  contents: write
   id-token: write
   packages: write
 
@@ -30,17 +30,58 @@ jobs:
       - name: Build
         run: pnpm build
 
-#      - name: Find package
-#        id: find-package
-#        env:
-#          RELEASE_TAG_NAME: ${{ github.event.release.tag_name }}
-#        run: |
-#          PACKAGE_NAME="${RELEASE_TAG_NAME%-*}"
-#          echo "Package is $PACKAGE_NAME"
-#          echo "package_name=$PACKAGE_NAME" >> "$GITHUB_OUTPUT"
+      #      - name: Find package
+      #        id: find-package
+      #        env:
+      #          RELEASE_TAG_NAME: ${{ github.event.release.tag_name }}
+      #        run: |
+      #          PACKAGE_NAME="${RELEASE_TAG_NAME%-*}"
+      #          echo "Package is $PACKAGE_NAME"
+      #          echo "package_name=$PACKAGE_NAME" >> "$GITHUB_OUTPUT"
 
-      - name: Publish
+      - name: Publish to GitHub Package Registry
         # run: pnpm --filter ./packages/${{ steps.find-package.outputs.package_name }} publish --no-git-checks
         run: pnpm publish ./packages/ui
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to dist branch
+        run: |
+          # Configure git
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Get the version from package.json
+          VERSION=$(node -p "require('./packages/ui/package.json').version")
+
+          # Create a temporary directory for the dist branch content
+          TEMP_DIR=$(mktemp -d)
+
+          # Copy the built package files
+          cp -r packages/ui/dist "$TEMP_DIR/"
+          cp packages/ui/package.json "$TEMP_DIR/"
+          cp packages/ui/CHANGELOG.md "$TEMP_DIR/" 2>/dev/null || true
+          cp LICENSE "$TEMP_DIR/" 2>/dev/null || true
+          cp README.md "$TEMP_DIR/" 2>/dev/null || true
+
+          # Switch to dist branch (create if doesn't exist)
+          git fetch origin dist:dist 2>/dev/null || true
+          git checkout --orphan dist-temp
+
+          # Clear the working directory
+          git rm -rf . 2>/dev/null || true
+          rm -rf *
+
+          # Copy files from temp directory
+          cp -r "$TEMP_DIR"/* .
+
+          # Create .gitignore to not ignore node_modules if someone installs locally
+          echo "node_modules/" > .gitignore
+
+          # Commit and push
+          git add -A
+          git commit -m "Publish v${VERSION} from main@${{ github.sha }}"
+          git push origin dist-temp:dist --force
+
+          # Clean up
+          rm -rf "$TEMP_DIR"

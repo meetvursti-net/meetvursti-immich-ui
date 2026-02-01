@@ -51,37 +51,36 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-          # Get the version from package.json
-          VERSION=$(node -p "require('./packages/ui/package.json').version")
-
           # Create a temporary directory for the dist branch content
           TEMP_DIR=$(mktemp -d)
 
-          # Copy the built package files
+          # Copy the built package structure
           cp -r packages/ui/dist "$TEMP_DIR/"
           cp packages/ui/package.json "$TEMP_DIR/"
-          cp packages/ui/CHANGELOG.md "$TEMP_DIR/" 2>/dev/null || true
-          cp LICENSE "$TEMP_DIR/" 2>/dev/null || true
-          cp README.md "$TEMP_DIR/" 2>/dev/null || true
+          cp packages/ui/README.md "$TEMP_DIR/" 2>/dev/null || true
+          cp packages/ui/LICENSE "$TEMP_DIR/" 2>/dev/null || true
 
-          # Switch to dist branch (create if doesn't exist)
+          # Create the tarball
+          cd "$TEMP_DIR"
+          npm pack
+          mv *.tgz immich-ui.tgz
+
+          # Switch to dist branch
+          cd "$GITHUB_WORKSPACE"
           git fetch origin dist:dist 2>/dev/null || true
-          git checkout --orphan dist-temp
 
-          # Clear the working directory
-          git rm -rf . 2>/dev/null || true
-          rm -rf *
+          if git show-ref --verify --quiet refs/heads/dist; then
+            git checkout dist
+          else
+            git checkout --orphan dist
+            git rm -rf .
+          fi
 
-          # Copy files from temp directory
-          cp -r "$TEMP_DIR"/* .
-
-          # Create .gitignore to not ignore node_modules if someone installs locally
-          echo "node_modules/" > .gitignore
+          # Clear and copy new content
+          rm -rf ./*
+          cp -r "$TEMP_DIR"/* ./
 
           # Commit and push
           git add -A
-          git commit -m "Publish v${VERSION} from main@${{ github.sha }}"
-          git push origin dist-temp:dist --force
-
-          # Clean up
-          rm -rf "$TEMP_DIR"
+          git diff --staged --quiet || git commit -m "Build from ${{ github.sha }}"
+          git push origin dist --force

@@ -1,7 +1,8 @@
 {
-  "name": "@meetvursti-net/immich-ui",
+  "name": "immich-monorepo",
   "version": "0.0.1",
-  "description": "Immich UI libarary, Meetvursti fork",
+  "description": "monorepo for immich and friends",
+  "private": true,
   "type": "module",
   "packageManager": "pnpm@10.28.1",
   "engines": {

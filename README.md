@@ -1,4 +1,4 @@
-# @immich/ui
+# Meetvursti @immich/ui fork
 
 A component library for [Immich](https://immich.app), written in [Svelte](https://svelte.dev).
 

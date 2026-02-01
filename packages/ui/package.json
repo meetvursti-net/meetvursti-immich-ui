@@ -40,7 +40,8 @@
     "./theme/default.css": "./dist/theme/default.css"
   },
   "peerDependencies": {
-    "svelte": "^5.0.0"
+    "svelte": "^5.0.0",
+    "tailwindcss": ">=4.1"
   },
   "devDependencies": {
     "@sveltejs/adapter-static": "^3.0.6",
@@ -55,7 +56,7 @@
     "publint": "^0.3.0",
     "svelte": "^5.37.0",
     "svelte-check": "^4.0.0",
-    "tailwindcss": "^4.1.7",
+    "tailwindcss": ">=4.1",
     "typescript": "^5.0.0",
     "vite": "^7.0.0",
     "vitest": "^4.0.0"
